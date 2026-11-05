@@ -2,39 +2,42 @@
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AFK Community | Premium Events</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AFK | After Diwali Party</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Razorpay & Supabase (CDN for frontend logic) -->
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts: Space Grotesk & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        brand: {
-                            dark: '#050505',
-                            card: 'rgba(255, 255, 255, 0.03)',
-                            cardHover: 'rgba(255, 255, 255, 0.05)',
-                            primary: '#f97316', // Orange
-                            primaryGlow: 'rgba(249, 115, 22, 0.4)',
-                            accent: '#fbbf24' // Amber/Gold
-                        }
-                    },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                        display: ['Outfit', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        afk: {
+                            neon: '#ff4d00', // Vibrant Orange
+                            pink: '#ff007f', // Festive Pink
+                            gold: '#ffc800', // Glowing Gold
+                            dark: '#020617', // Very Dark Slate
+                            card: '#0f172a', // Slate 900
+                            border: '#1e293b' // Slate 800
+                        }
                     },
                     animation: {
-                        'float': 'float 6s ease-in-out infinite',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-20px)' },
+                        'pulse-glow': {
+                            '0%, 100%': { opacity: 1, transform: 'scale(1)' },
+                            '50%': { opacity: 0.5, transform: 'scale(1.2)' },
                         }
                     }
                 }
@@ -42,703 +45,406 @@
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800;900&display=swap');
-        
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #050505;
-            color: #ffffff;
-            overflow-x: hidden;
+        body {
+            background-color: #020617;
+            color: #cbd5e1;
+            /* Prevent pull-to-refresh on mobile */
+            overscroll-behavior-y: none; 
         }
-        
-        h1, h2, h3, h4, .font-display {
-            font-family: 'Outfit', sans-serif;
-        }
-
-        .modal-active { overflow: hidden; }
-        
-        /* Custom Premium Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #050505; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #f97316; }
-
-        /* Glassmorphism Utilities */
-        .glass {
-            background: rgba(255, 255, 255, 0.03);
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.65);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        
-        .glass-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-        }
-
-        /* Text Gradients */
         .text-gradient {
-            background: linear-gradient(to right, #f97316, #fbbf24);
+            background: linear-gradient(135deg, #ff4d00 0%, #ff007f 50%, #ffc800 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
+        /* Mobile Bottom Sheet Animation */
+        .bottom-sheet {
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .bottom-sheet.open {
+            transform: translateY(0);
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+        /* Hide scrollbar */
+        ::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="antialiased selection:bg-brand-primary selection:text-white relative">
+<body class="font-sans antialiased selection:bg-afk-pink selection:text-white pb-24 md:pb-0">
 
-    <!-- Ambient Background Glows -->
-    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-primary/20 rounded-full blur-[120px]"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-brand-accent/10 rounded-full blur-[120px]"></div>
-    </div>
+    <!-- Mobile Header -->
+    <header class="fixed top-0 left-0 right-0 z-40 glass-panel border-b border-slate-800/50">
+        <div class="px-6 h-16 flex items-center justify-between max-w-7xl mx-auto">
+            <a href="#" class="font-display font-bold text-2xl text-white tracking-tight flex items-end gap-1">
+                AFK<div class="w-2 h-2 bg-afk-neon rounded-full mb-1.5 animate-pulse-glow shadow-[0_0_10px_#ff4d00]"></div>
+            </a>
+            
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex items-center gap-8 font-display text-sm font-medium">
+                <a href="#event" class="text-white hover:text-afk-neon transition">Current Event</a>
+                <a href="#upcoming" class="text-slate-400 hover:text-white transition">Upcoming</a>
+                <div class="flex items-center gap-4 border-l border-slate-800 pl-6">
+                    <a href="https://instagram.com" target="_blank" class="text-slate-400 hover:text-afk-pink transition text-lg"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://whatsapp.com" target="_blank" class="text-slate-400 hover:text-green-500 transition text-lg"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </nav>
 
-    <!-- Navigation -->
-    <nav class="fixed w-full z-50 glass border-b-0 transition-all duration-300" id="navbar">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-primary to-brand-accent flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.4)]">
-                        <i class="fa-solid fa-keyboard text-white text-lg"></i>
-                    </div>
-                    <span class="font-display font-bold text-2xl tracking-wide">AFK<span class="text-brand-primary">.</span></span>
+            <!-- Mobile Menu Toggle -->
+            <div class="md:hidden flex items-center gap-5">
+                <a href="https://instagram.com" target="_blank" class="text-slate-300 text-lg"><i class="fa-brands fa-instagram"></i></a>
+                <button id="menuBtn" onclick="toggleMenu()" class="w-8 h-8 flex items-center justify-end text-white">
+                    <i class="fa-solid fa-bars text-xl" id="menuIcon"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Dropdown -->
+        <div id="mobileMenu" class="hidden absolute top-16 left-0 w-full glass-panel border-b border-slate-800 flex-col py-4 px-6 gap-4 font-display text-lg">
+            <a href="#event" class="text-white py-2" onclick="toggleMenu()">Current Event</a>
+            <a href="#upcoming" class="text-slate-400 py-2" onclick="toggleMenu()">Upcoming & Past</a>
+            <div class="flex items-center gap-6 py-2 border-t border-slate-800 mt-2">
+                <a href="https://whatsapp.com" target="_blank" class="text-slate-400 hover:text-green-500 flex items-center gap-2"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero / Main Event Section -->
+    <section id="event" class="pt-24 px-4 md:px-6 max-w-7xl mx-auto mb-16">
+        
+        <!-- Bento Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-auto">
+            
+            <!-- Main Hero Image (Spans 2 cols on Desktop) -->
+            <div class="md:col-span-2 rounded-[2rem] overflow-hidden relative min-h-[400px] md:min-h-[500px] group border border-slate-800 shadow-2xl">
+                <!-- Indian Diwali Image -->
+                <img src="https://images.unsplash.com/photo-1574180566232-aaad1bce0941?auto=format&fit=crop&q=80&w=1000" alt="Indian Diwali Diyas" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+                
+                <div class="absolute top-6 left-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-afk-pink/30 bg-black/50 backdrop-blur-md text-afk-pink text-xs font-bold tracking-widest uppercase">
+                    <span class="w-1.5 h-1.5 rounded-full bg-afk-pink animate-pulse"></span>
+                    Live Registration
                 </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-1">
-                        <a href="#home" class="hover:bg-white/5 transition-all px-4 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:text-white">Home</a>
-                        <a href="#current-event" class="bg-brand-primary/10 text-brand-primary px-4 py-2.5 rounded-lg text-sm font-medium border border-brand-primary/20">Current Event</a>
-                        <a href="#upcoming-events" class="hover:bg-white/5 transition-all px-4 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:text-white">Upcoming</a>
-                        <a href="#past-events" class="hover:bg-white/5 transition-all px-4 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:text-white">Past Events</a>
+
+                <div class="absolute bottom-6 left-6 right-6">
+                    <h1 class="font-display text-5xl md:text-7xl font-black text-white leading-none mb-3 drop-shadow-lg uppercase tracking-tighter">
+                        After Diwali<br><span class="text-gradient">Party.</span>
+                    </h1>
+                    <p class="text-slate-200 font-medium drop-shadow-md max-w-md text-sm md:text-base">
+                        A curated traditional experience. Conclude the festive season with absolute elegance, glowing diyas, and unmatched vibes.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Details Card -->
+            <div class="bg-afk-card border border-slate-800 rounded-[2rem] p-6 flex flex-col relative overflow-hidden shadow-2xl">
+                <!-- Decorative Glow -->
+                <div class="absolute top-0 right-0 w-32 h-32 bg-afk-neon/20 rounded-full blur-[50px] pointer-events-none"></div>
+                
+                <h3 class="font-display font-bold text-2xl text-white mb-6">The Details</h3>
+                
+                <div class="space-y-5 mb-8 flex-grow relative z-10 text-sm">
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-afk-neon flex-shrink-0">
+                            <i class="fa-regular fa-calendar-check"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-white">Sunday, 22 November</p>
+                            <p class="text-slate-400">3:00 PM - 7:00 PM</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-afk-pink flex-shrink-0">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-white">Theko Club, Up & Above</p>
+                            <p class="text-slate-400">Amravati</p>
+                        </div>
                     </div>
                 </div>
-                <!-- Mobile menu button -->
-                <div class="md:hidden flex items-center">
-                    <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white focus:outline-none p-2 bg-white/5 rounded-lg border border-white/10 active:scale-95 transition-transform">
-                        <i class="fa-solid fa-bars text-xl"></i>
+
+                <div class="mb-8 p-4 bg-slate-900/50 rounded-xl border border-slate-800">
+                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Highlights</h4>
+                    <ul class="space-y-2 text-sm font-medium text-slate-300">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-asterisk text-afk-gold text-[10px]"></i> Proper Traditional Theme</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-asterisk text-afk-gold text-[10px]"></i> Food & Welcome Drinks</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-asterisk text-afk-gold text-[10px]"></i> Premium Desserts</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-asterisk text-afk-gold text-[10px]"></i> Amravati's Best DJ</li>
+                    </ul>
+                </div>
+
+                <div class="mt-auto hidden md:block border-t border-slate-800 pt-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <p class="text-slate-400 text-sm font-medium">Entry Pass</p>
+                        <p class="font-display font-bold text-2xl text-white">₹900</p>
+                    </div>
+                    <button onclick="openModal()" class="w-full bg-gradient-to-r from-afk-neon to-afk-pink text-white py-3.5 rounded-xl font-bold hover:opacity-90 transition shadow-lg shadow-afk-pink/20">
+                        Get Ticket Now
                     </button>
                 </div>
             </div>
         </div>
-        <!-- Mobile Menu Dropdown -->
-        <div id="mobileMenu" class="md:hidden absolute top-20 left-0 w-full bg-[#050505]/95 backdrop-blur-2xl border-b border-white/10 transition-all duration-300 opacity-0 pointer-events-none -translate-y-4 shadow-2xl">
-            <div class="px-4 py-6 flex flex-col space-y-2">
-                <a href="#home" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white hover:bg-white/5 px-5 py-4 rounded-xl text-lg font-medium transition-colors">Home</a>
-                <a href="#current-event" onclick="toggleMobileMenu()" class="text-brand-primary bg-brand-primary/10 border border-brand-primary/20 px-5 py-4 rounded-xl text-lg font-medium transition-colors">Current Event</a>
-                <a href="#upcoming-events" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white hover:bg-white/5 px-5 py-4 rounded-xl text-lg font-medium transition-colors">Upcoming</a>
-                <a href="#past-events" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white hover:bg-white/5 px-5 py-4 rounded-xl text-lg font-medium transition-colors">Past Events</a>
-            </div>
-        </div>
-    </nav>
+    </section>
 
-    <!-- Hero Section -->
-    <section id="home" class="relative min-h-[90vh] flex items-center justify-center pt-20 overflow-hidden">
-        <!-- Background Image with Overlay -->
-        <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2070&auto=format&fit=crop" alt="Party Crowd" class="w-full h-full object-cover object-center opacity-40" />
-            <div class="absolute inset-0 bg-gradient-to-b from-brand-dark/80 via-brand-dark/60 to-brand-dark"></div>
-        </div>
-
-        <div class="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-            <div class="inline-block mb-6 px-4 py-1.5 rounded-full glass border border-brand-primary/30 text-brand-primary text-sm font-medium tracking-wider uppercase animate-float">
-                <i class="fa-solid fa-sparkles mr-2"></i> Join the ultimate offline experience
+    <!-- Upcoming / Past Section -->
+    <section id="upcoming" class="px-4 md:px-6 max-w-7xl mx-auto mb-20 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Upcoming -->
+        <div class="border border-dashed border-slate-800 rounded-[2rem] p-10 flex flex-col items-center justify-center text-center min-h-[250px] bg-slate-900/20">
+            <div class="w-12 h-12 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500 mb-4 text-xl">
+                <i class="fa-solid fa-ghost"></i>
             </div>
-            <h1 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight mb-6 leading-tight">
-                Away From <br class="hidden md:block" />
-                <span class="text-gradient drop-shadow-[0_0_30px_rgba(249,115,22,0.3)]">Keyboard</span>
-            </h1>
-            <p class="mt-6 max-w-2xl mx-auto text-lg md:text-xl text-gray-300 mb-10 font-light leading-relaxed">
-                Disconnect to connect. AFK is your premium community for unforgettable offline celebrations, exclusive parties, and real-world memories.
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="#current-event" class="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-200 bg-brand-primary rounded-xl hover:bg-brand-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary shadow-[0_0_20px_rgba(249,115,22,0.4)] hover:shadow-[0_0_30px_rgba(249,115,22,0.6)] hover:-translate-y-1">
-                    Get Event Passes
-                    <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
-                </a>
-                <a href="#upcoming-events" class="inline-flex items-center justify-center px-8 py-4 font-semibold text-white transition-all duration-200 glass rounded-xl hover:bg-white/10 focus:outline-none hover:-translate-y-1 border border-white/10">
-                    Explore Community
-                </a>
-            </div>
+            <h3 class="font-display font-bold text-xl text-white mb-2">No Upcoming Drops</h3>
+            <p class="text-sm text-slate-500 max-w-xs">We're cooking up the next experience. Check back soon.</p>
         </div>
         
-        <!-- Scroll Indicator -->
-        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce flex flex-col items-center opacity-50">
-            <span class="text-xs tracking-widest uppercase mb-2">Scroll</span>
-            <i class="fa-solid fa-chevron-down"></i>
+        <!-- Past -->
+        <div class="border border-dashed border-slate-800 rounded-[2rem] p-10 flex flex-col items-center justify-center text-center min-h-[250px] bg-slate-900/20">
+            <div class="w-12 h-12 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500 mb-4 text-xl">
+                <i class="fa-solid fa-box-archive"></i>
+            </div>
+            <h3 class="font-display font-bold text-xl text-white mb-2">Archive Empty</h3>
+            <p class="text-sm text-slate-500 max-w-xs">Our legacy starts with the After Diwali Party. Be there.</p>
         </div>
     </section>
-
-    <!-- Current Event Section -->
-    <section id="current-event" class="py-24 relative z-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-                <div>
-                    <span class="text-brand-primary font-semibold tracking-widest uppercase text-sm flex items-center gap-2 mb-2">
-                        <span class="w-2 h-2 rounded-full bg-brand-primary animate-pulse"></span> Live Now
-                    </span>
-                    <h2 class="text-4xl md:text-5xl font-black">After Diwali Party</h2>
-                </div>
-                <div class="glass px-6 py-3 rounded-xl border border-brand-primary/20 flex items-center gap-4">
-                    <div class="text-right">
-                        <p class="text-xs text-gray-400 uppercase tracking-wider">Entry Pass</p>
-                        <p class="text-2xl font-bold text-white">₹900 <span class="text-sm font-normal text-gray-500">/pp</span></p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="glass-card rounded-3xl overflow-hidden group">
-                <div class="flex flex-col lg:flex-row">
-                    <!-- High Quality Event Image -->
-                    <div class="lg:w-5/12 relative min-h-[400px] lg:min-h-full overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1574360341774-672ce100a0b2?q=80&w=2070&auto=format&fit=crop" alt="Diwali Celebration" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/20 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-brand-dark"></div>
-                        
-                        <div class="absolute bottom-6 left-6 lg:bottom-10 lg:left-10 z-10">
-                            <div class="glass inline-block px-4 py-2 rounded-lg mb-3 border-white/20">
-                                <i class="fa-solid fa-music text-brand-primary mr-2"></i> DJ Night
-                            </div>
-                            <h3 class="text-3xl font-bold text-white drop-shadow-lg">A Night of<br>Lights & Rhythm</h3>
-                        </div>
-                    </div>
-                    
-                    <!-- Event Details -->
-                    <div class="lg:w-7/12 p-8 md:p-12 flex flex-col justify-between relative">
-                        <!-- Decorative bg element -->
-                        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-primary/5 rounded-full blur-[80px] pointer-events-none"></div>
-
-                        <div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-                                <div class="flex items-start gap-4">
-                                    <div class="w-12 h-12 rounded-xl bg-brand-primary/10 flex items-center justify-center border border-brand-primary/20 flex-shrink-0">
-                                        <i class="fa-regular fa-calendar text-brand-primary text-xl"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-400 text-xs uppercase tracking-wider mb-1">Date</p>
-                                        <p class="font-semibold text-lg text-white">Sunday, 22 Nov</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-4">
-                                    <div class="w-12 h-12 rounded-xl bg-brand-primary/10 flex items-center justify-center border border-brand-primary/20 flex-shrink-0">
-                                        <i class="fa-regular fa-clock text-brand-primary text-xl"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-400 text-xs uppercase tracking-wider mb-1">Time</p>
-                                        <p class="font-semibold text-lg text-white">3:00 PM - 7:00 PM</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-4 md:col-span-2">
-                                    <div class="w-12 h-12 rounded-xl bg-brand-primary/10 flex items-center justify-center border border-brand-primary/20 flex-shrink-0">
-                                        <i class="fa-solid fa-location-dot text-brand-primary text-xl"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-400 text-xs uppercase tracking-wider mb-1">Venue</p>
-                                        <p class="font-semibold text-lg text-white">Theko Club, Up & Above</p>
-                                        <p class="text-sm text-gray-400 mt-1">Next Level Mall, Camp Road, Amravati</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-10">
-                                <h4 class="text-xl font-bold mb-5 flex items-center gap-3">
-                                    <i class="fa-solid fa-star text-brand-accent text-sm"></i> 
-                                    Event Highlights
-                                </h4>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div class="flex items-center gap-3 glass px-4 py-3 rounded-lg border-white/5">
-                                        <i class="fa-solid fa-check-circle text-brand-primary"></i>
-                                        <span class="text-gray-200 text-sm font-medium">Proper Traditional Theme</span>
-                                    </div>
-                                    <div class="flex items-center gap-3 glass px-4 py-3 rounded-lg border-white/5">
-                                        <i class="fa-solid fa-check-circle text-brand-primary"></i>
-                                        <span class="text-gray-200 text-sm font-medium">Welcome Drinks</span>
-                                    </div>
-                                    <div class="flex items-center gap-3 glass px-4 py-3 rounded-lg border-white/5">
-                                        <i class="fa-solid fa-check-circle text-brand-primary"></i>
-                                        <span class="text-gray-200 text-sm font-medium">Delicious Food & Desserts</span>
-                                    </div>
-                                    <div class="flex items-center gap-3 glass px-4 py-3 rounded-lg border-white/5">
-                                        <i class="fa-solid fa-check-circle text-brand-primary"></i>
-                                        <span class="text-gray-200 text-sm font-medium">Live DJ Performance</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button onclick="openModal()" class="w-full relative group overflow-hidden rounded-xl p-[1px]">
-                            <span class="absolute inset-0 bg-gradient-to-r from-brand-primary via-brand-accent to-brand-primary rounded-xl opacity-70 group-hover:opacity-100 transition-opacity duration-300"></span>
-                            <div class="relative bg-brand-dark px-8 py-4 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 group-hover:bg-opacity-0">
-                                <span class="font-bold text-white group-hover:text-black transition-colors duration-300">Register & Secure Your Spot</span>
-                                <i class="fa-solid fa-ticket text-white group-hover:text-black transition-colors duration-300"></i>
-                            </div>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- What to Expect Section (New Visual Grid) -->
-    <section class="py-20 relative border-t border-white/5 bg-gradient-to-b from-transparent to-brand-dark">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-5xl font-bold mb-4">What to <span class="text-brand-primary">Expect</span></h2>
-                <p class="text-gray-400 max-w-2xl mx-auto">Prepare yourself for an evening curated to perfection, combining tradition with an unforgettable party atmosphere.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-                <!-- Expectation Card 1 -->
-                <div class="glass-card rounded-2xl p-2 group hover:-translate-y-2 transition-all duration-300">
-                    <div class="h-48 rounded-xl overflow-hidden mb-4 relative">
-                        <img src="https://images.unsplash.com/photo-1601312301077-6d302a64dc78?q=80&w=800&auto=format&fit=crop" alt="Traditional Theme" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/80 to-transparent"></div>
-                        <div class="absolute bottom-3 left-3 w-10 h-10 rounded-full bg-brand-primary/90 flex items-center justify-center text-white">
-                            <i class="fa-solid fa-masks-theater"></i>
-                        </div>
-                    </div>
-                    <div class="px-4 pb-4">
-                        <h3 class="text-xl font-bold text-white mb-2">Traditional Theme</h3>
-                        <p class="text-sm text-gray-400 leading-relaxed">Dress to impress in your best traditional attire. The venue will be transformed into a festive paradise.</p>
-                    </div>
-                </div>
-
-                <!-- Expectation Card 2 -->
-                <div class="glass-card rounded-2xl p-2 group hover:-translate-y-2 transition-all duration-300">
-                    <div class="h-48 rounded-xl overflow-hidden mb-4 relative">
-                        <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=800&auto=format&fit=crop" alt="Food and Drinks" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/80 to-transparent"></div>
-                        <div class="absolute bottom-3 left-3 w-10 h-10 rounded-full bg-brand-primary/90 flex items-center justify-center text-white">
-                            <i class="fa-solid fa-martini-glass-citrus"></i>
-                        </div>
-                    </div>
-                    <div class="px-4 pb-4">
-                        <h3 class="text-xl font-bold text-white mb-2">Exquisite F&B</h3>
-                        <p class="text-sm text-gray-400 leading-relaxed">Enjoy complimentary welcome drinks, mouth-watering starters, full course meals, and special festive desserts.</p>
-                    </div>
-                </div>
-
-                <!-- Expectation Card 3 -->
-                <div class="glass-card rounded-2xl p-2 group hover:-translate-y-2 transition-all duration-300">
-                    <div class="h-48 rounded-xl overflow-hidden mb-4 relative">
-                        <img src="https://images.unsplash.com/photo-1571266028243-cb40fce7573a?q=80&w=800&auto=format&fit=crop" alt="DJ Performance" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/80 to-transparent"></div>
-                        <div class="absolute bottom-3 left-3 w-10 h-10 rounded-full bg-brand-primary/90 flex items-center justify-center text-white">
-                            <i class="fa-solid fa-compact-disc"></i>
-                        </div>
-                    </div>
-                    <div class="px-4 pb-4">
-                        <h3 class="text-xl font-bold text-white mb-2">Amravati's Best DJ</h3>
-                        <p class="text-sm text-gray-400 leading-relaxed">Dance the evening away with high-energy beats, blending the latest chart-toppers with classic festive anthems.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Upcoming & Past Events (Empty States) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 gap-8 py-20 border-t border-white/5">
-        
-        <!-- Upcoming Events -->
-        <section id="upcoming-events">
-            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-                <i class="fa-solid fa-rocket text-brand-primary"></i> Upcoming Events
-            </h2>
-            <div class="glass border border-dashed border-white/20 rounded-2xl p-12 text-center flex flex-col items-center justify-center h-[300px] transition-colors hover:bg-white/5">
-                <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 text-gray-500">
-                    <i class="fa-regular fa-calendar-xmark text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-2">No Events Yet</h3>
-                <p class="text-sm text-gray-400 max-w-xs">Stay tuned! We are planning something awesome for the community soon.</p>
-            </div>
-        </section>
-
-        <!-- Past Events -->
-        <section id="past-events">
-            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-                <i class="fa-solid fa-clock-rotate-left text-brand-primary"></i> Past Events
-            </h2>
-            <div class="glass border border-dashed border-white/20 rounded-2xl p-12 text-center flex flex-col items-center justify-center h-[300px] transition-colors hover:bg-white/5">
-                <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 text-gray-500">
-                    <i class="fa-solid fa-folder-open text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-2">No History Yet</h3>
-                <p class="text-sm text-gray-400 max-w-xs">Our legacy is just beginning. Check back here after the Diwali party!</p>
-            </div>
-        </section>
-
-    </div>
 
     <!-- Footer -->
-    <footer class="bg-black/50 backdrop-blur-lg py-10 px-6 border-t border-white/10 mt-10">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="flex items-center gap-2">
-                <i class="fa-solid fa-keyboard text-brand-primary text-xl"></i>
-                <span class="font-display font-bold text-white tracking-wider text-xl">AFK.</span>
-            </div>
-            <p class="text-sm text-gray-500 text-center">&copy; 2026 AFK Community. All rights reserved.</p>
-            <div class="flex gap-6 text-sm">
-                <a href="#" class="text-gray-500 hover:text-brand-primary p-2 transition-colors"><i class="fa-brands fa-instagram text-2xl"></i></a>
-                <a href="#" class="text-gray-500 hover:text-brand-primary p-2 transition-colors"><i class="fa-brands fa-whatsapp text-2xl"></i></a>
-            </div>
+    <footer class="px-6 py-12 border-t border-slate-800 text-center flex flex-col items-center max-w-7xl mx-auto md:mb-0 pb-safe">
+        <h2 class="font-display font-black text-3xl text-white tracking-tighter mb-6 uppercase">AFK.</h2>
+        <div class="flex items-center gap-6 mb-8">
+            <a href="https://instagram.com" target="_blank" class="w-12 h-12 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-afk-pink hover:border-afk-pink transition-colors">
+                <i class="fa-brands fa-instagram text-xl"></i>
+            </a>
+            <a href="https://whatsapp.com" target="_blank" class="w-12 h-12 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-green-500 hover:border-green-500 transition-colors">
+                <i class="fa-brands fa-whatsapp text-xl"></i>
+            </a>
         </div>
+        <p class="text-slate-600 text-sm font-medium">&copy; 2026 AFK Community. Disconnect to connect.</p>
     </footer>
 
-    <!-- Premium Registration & Payment Modal (Mobile Bottom Sheet) -->
-    <div id="registrationModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-end md:items-center justify-center md:p-6 overflow-hidden">
-        <div id="modalContent" class="w-full max-w-2xl bg-[#0a0a0a] rounded-t-3xl md:rounded-3xl relative shadow-[0_-10px_50px_rgba(0,0,0,0.8)] border-t md:border border-white/10 flex flex-col max-h-[90vh] md:max-h-[85vh] transition-transform duration-300 transform translate-y-full opacity-0">
+    <!-- Sticky Bottom Action Bar (Mobile Only) -->
+    <div class="md:hidden fixed bottom-0 left-0 w-full glass-panel border-t border-slate-800 p-4 pb-safe z-30 flex items-center justify-between">
+        <div>
+            <p class="text-[10px] uppercase text-slate-400 font-bold tracking-widest">Passes Live</p>
+            <p class="font-display font-bold text-xl text-white">₹900</p>
+        </div>
+        <button onclick="openModal()" class="bg-gradient-to-r from-afk-neon to-afk-pink text-white font-display font-bold px-8 py-3.5 rounded-xl active:scale-95 transition-transform flex items-center gap-2 shadow-lg shadow-afk-pink/20">
+            Get Ticket <i class="fa-solid fa-bolt text-sm"></i>
+        </button>
+    </div>
+
+    <!-- Mobile Bottom Sheet / Modal (Registration) -->
+    <div id="regModal" class="fixed inset-0 z-50 hidden">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" id="modalBackdrop" onclick="closeModal()"></div>
+        
+        <!-- Sheet Content -->
+        <div id="bottomSheet" class="bottom-sheet absolute bottom-0 left-0 w-full bg-slate-950 border-t border-slate-800 rounded-t-[2rem] max-h-[90vh] overflow-y-auto flex flex-col md:relative md:w-full md:max-w-md md:mx-auto md:top-1/2 md:-translate-y-1/2 md:rounded-[2rem] md:border md:h-auto shadow-2xl pb-safe">
             
-            <!-- Mobile pull indicator -->
-            <div class="w-full flex justify-center pt-3 pb-1 md:hidden" onclick="closeModal()">
-                <div class="w-12 h-1.5 bg-gray-600 rounded-full"></div>
+            <!-- Drag handle (Mobile) -->
+            <div class="w-full flex justify-center pt-4 pb-2 md:hidden" onclick="closeModal()">
+                <div class="w-12 h-1.5 bg-slate-800 rounded-full"></div>
             </div>
 
-            <!-- Modal Header -->
-            <div class="flex justify-between items-center px-6 py-4 md:p-6 border-b border-white/10 bg-white/5 flex-shrink-0">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-brand-primary/20 flex items-center justify-center text-brand-primary">
-                        <i class="fa-solid fa-ticket-simple"></i>
-                    </div>
-                    <h3 class="text-xl font-display font-bold text-white">Event Registration</h3>
-                </div>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-white transition-all w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 focus:outline-none active:scale-95">
-                    <i class="fa-solid fa-xmark text-xl"></i>
+            <!-- Header -->
+            <div class="px-6 py-4 flex justify-between items-center border-b border-slate-800/50">
+                <h3 class="font-display font-bold text-lg text-white">Checkout</h3>
+                <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-slate-400">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <!-- Modal Body (Scrollable) -->
-            <div class="overflow-y-auto flex-grow p-5 md:p-8 custom-scrollbar relative">
-                
-                <!-- Form Section -->
-                <div id="formSection" class="flex flex-col h-full">
-                                <p class="font-display font-bold text-xl text-white mb-1">After Diwali Party</p>
-                                <p class="text-sm text-gray-400"><i class="fa-regular fa-calendar mr-1"></i> 22 Nov &nbsp;|&nbsp; <i class="fa-solid fa-location-dot mr-1"></i> Theko Club</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs text-gray-400 uppercase tracking-wide mb-1">Price per pass</p>
-                                <p class="font-display font-bold text-brand-primary text-2xl">₹900</p>
-                            </div>
+            <div class="p-6">
+                <!-- STEP 1: Form -->
+                <div id="stepForm" class="space-y-6">
+                    <!-- Order Summary -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-white text-sm">After Diwali Party</p>
+                            <p class="text-xs text-slate-400">Nov 22, Theko Club</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-display font-bold text-afk-gold">₹900</p>
+                            <p class="text-[10px] text-slate-500">Per pass</p>
                         </div>
                     </div>
 
-                    <form id="regForm" onsubmit="processPayment(event)">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
-                            <div class="sm:col-span-2">
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
-                                <input type="text" id="fullName" required class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all placeholder-gray-600 shadow-inner" placeholder="Enter your name">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
-                                <input type="email" id="email" required class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all placeholder-gray-600 shadow-inner" placeholder="name@example.com">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
-                                <input type="tel" id="phone" required pattern="[0-9]{10}" class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all placeholder-gray-600 shadow-inner" placeholder="10-digit mobile">
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Select Passes</label>
-                                <div class="relative">
-                                    <select id="ticketCount" onchange="calculateTotal()" class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all appearance-none shadow-inner cursor-pointer text-lg">
-                                        <option value="1">1 Pass — ₹900</option>
-                                        <option value="2">2 Passes — ₹1,800</option>
-                                        <option value="3">3 Passes — ₹2,700</option>
-                                        <option value="4">4 Passes — ₹3,600</option>
-                                        <option value="5">5 Passes — ₹4,500</option>
-                                    </select>
-                                    <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-400">
-                                        <i class="fa-solid fa-chevron-down text-lg"></i>
-                                    </div>
-                                </div>
-                            </div>
+                    <!-- Inputs -->
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5 ml-1">Full Name</label>
+                            <input type="text" id="userName" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-afk-pink transition-colors" placeholder="Enter your name">
                         </div>
-
-                        <!-- Sticky Mobile Footer for Payment -->
-                        <div class="sticky bottom-0 bg-[#0a0a0a]/95 backdrop-blur-md pt-4 pb-2 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 mt-auto -mx-5 px-5 md:-mx-8 md:px-8 z-20">
-                            <div class="flex justify-between items-center w-full sm:w-auto gap-4">
-                                <div>
-                                    <p class="text-gray-400 text-xs uppercase tracking-wider mb-1">Total Payable</p>
-                                    <p id="totalAmount" class="font-display text-3xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">₹900</p>
-                                </div>
-                            </div>
-                            <button type="submit" id="payBtn" class="w-full sm:w-auto bg-[#3395ff] text-white hover:bg-[#2084f4] font-bold py-4 px-8 rounded-xl transition-all shadow-[0_0_20px_rgba(51,149,255,0.3)] active:scale-95 flex items-center justify-center gap-2 text-lg">
-                                <span>Pay with Razorpay</span>
-                                <i class="fa-solid fa-bolt text-sm"></i>
-                            </button>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5 ml-1">Email</label>
+                            <input type="email" id="userEmail" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-afk-pink transition-colors" placeholder="your@email.com">
                         </div>
-                    </form>
-                </div>
-
-                <!-- Loading State -->
-                <div id="loadingSection" class="hidden py-24 flex flex-col items-center justify-center text-center">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fa-solid fa-shield-halved text-[#3395ff]"></i>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5 ml-1">Phone Number</label>
+                            <input type="tel" id="userPhone" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-afk-pink transition-colors" placeholder="10-digit mobile number">
                         </div>
                     </div>
-                    <h3 id="loadingText" class="font-display text-2xl font-bold mb-2 text-white">Initializing Razorpay...</h3>
-                    <p class="text-gray-400 text-sm">Please do not close this window or press back.</p>
-                </div>
 
-                <!-- Success State (Digital Ticket) -->
-                <div id="successSection" class="hidden py-8 text-center flex flex-col items-center">
-                    <div class="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-green-500/30 shadow-[0_0_30px_rgba(34,197,94,0.2)]">
-                        <i class="fa-solid fa-check text-4xl text-green-500 drop-shadow-[0_0_10px_rgba(34,197,94,0.8)]"></i>
-                    </div>
-                    <h3 class="font-display text-3xl font-bold mb-2 text-white">Payment Successful!</h3>
-                    <p class="text-gray-400 mb-8 text-sm">Your registration is confirmed. Screenshot your pass below.</p>
+                    <button onclick="processPayment()" class="w-full bg-[#3395FF] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-lg shadow-blue-500/20">
+                        <i class="fa-solid fa-shield-halved"></i> Pay with Razorpay
+                    </button>
                     
-                    <!-- Digital Premium Ticket -->
-                    <div class="bg-gradient-to-br from-brand-dark to-[#111] border border-brand-primary/40 rounded-2xl p-1 mb-8 w-full max-w-sm mx-auto text-left relative overflow-hidden shadow-[0_0_30px_rgba(249,115,22,0.15)] group">
-                        <!-- Animated border effect -->
-                        <div class="absolute inset-0 bg-gradient-to-r from-brand-primary via-brand-accent to-brand-primary opacity-30 group-hover:opacity-60 transition-opacity blur-md z-0"></div>
-                        
-                        <div class="relative bg-[#0a0a0a] rounded-xl p-6 z-10 h-full">
-                            <!-- Cutouts -->
-                            <div class="absolute -left-4 top-1/2 w-8 h-8 bg-[#151515] rounded-full border-r border-brand-primary/30 -translate-y-1/2 shadow-inner"></div>
-                            <div class="absolute -right-4 top-1/2 w-8 h-8 bg-[#151515] rounded-full border-l border-brand-primary/30 -translate-y-1/2 shadow-inner"></div>
+                    <p class="text-[10px] text-center text-slate-500 flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-lock"></i> Secure Payments by Razorpay
+                    </p>
+                </div>
+
+                <!-- STEP 2: Loading / Processing -->
+                <div id="stepLoading" class="hidden py-16 flex flex-col items-center justify-center text-center">
+                    <div class="w-12 h-12 border-4 border-slate-800 border-t-afk-pink rounded-full animate-spin mb-4"></div>
+                    <p class="font-display font-bold text-white text-lg">Initializing PaymentGateway...</p>
+                    <p class="text-xs text-slate-400 mt-2">Connecting to Supabase and Razorpay.</p>
+                </div>
+
+                <!-- STEP 3: Success -->
+                <div id="stepSuccess" class="hidden py-6 space-y-6">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/30">
+                            <i class="fa-solid fa-check text-3xl"></i>
+                        </div>
+                        <h4 class="font-display font-bold text-2xl text-white">You're In!</h4>
+                        <p class="text-sm text-slate-400">Payment successful. See you at the party.</p>
+                    </div>
+
+                    <!-- Digital Ticket -->
+                    <div class="bg-gradient-to-br from-afk-neon to-afk-pink p-1 rounded-xl shadow-lg shadow-afk-pink/20">
+                        <div class="bg-slate-950 rounded-lg p-5 relative overflow-hidden">
+                            <!-- Punch holes -->
+                            <div class="absolute -left-3 top-1/2 w-6 h-6 bg-slate-900 rounded-full -translate-y-1/2"></div>
+                            <div class="absolute -right-3 top-1/2 w-6 h-6 bg-slate-900 rounded-full -translate-y-1/2"></div>
                             
-                            <div class="flex justify-between items-start mb-6">
+                            <div class="flex justify-between items-start border-b border-slate-800 pb-4 mb-4">
                                 <div>
-                                    <p class="text-[10px] text-brand-primary uppercase tracking-[0.2em] font-bold mb-1">VIP Access</p>
-                                    <p class="font-display font-bold text-2xl text-white leading-none">After Diwali Party</p>
+                                    <p class="text-[10px] text-afk-gold uppercase tracking-widest font-bold mb-1">Entry Pass</p>
+                                    <p class="font-display font-bold text-white text-lg leading-tight">After Diwali<br>Party</p>
                                 </div>
-                                <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
-                                    <i class="fa-solid fa-fire text-brand-primary"></i>
+                                <div class="bg-white p-1 rounded">
+                                    <i class="fa-solid fa-qrcode text-3xl text-black"></i>
                                 </div>
                             </div>
                             
-                            <div class="grid grid-cols-2 gap-y-5 gap-x-4 text-sm mb-6 border-y border-dashed border-white/10 py-5">
+                            <div class="grid grid-cols-2 gap-4 text-xs">
                                 <div>
-                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Date</p>
-                                    <p class="font-semibold text-gray-200">22 Nov 2026</p>
+                                    <p class="text-slate-500 mb-0.5">Name</p>
+                                    <p class="font-bold text-white truncate" id="ticketNameDisplay">Name</p>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Time</p>
-                                    <p class="font-semibold text-gray-200">3:00 PM</p>
-                                </div>
-                                <div class="col-span-2">
-                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Venue</p>
-                                    <p class="font-semibold text-gray-200">Theko Club, Up & Above</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Admit</p>
-                                    <p class="font-display font-bold text-lg text-white" id="ticketConfirmCount">1 Pass</p>
-                                </div>
-                                <!-- Mock Barcode -->
-                                <div class="flex gap-1 h-8 opacity-60">
-                                    <div class="w-1 bg-white h-full"></div>
-                                    <div class="w-2 bg-white h-full"></div>
-                                    <div class="w-1 bg-white h-full"></div>
-                                    <div class="w-3 bg-white h-full"></div>
-                                    <div class="w-1 bg-white h-full"></div>
-                                    <div class="w-2 bg-white h-full"></div>
-                                    <div class="w-1 bg-white h-full"></div>
-                                    <div class="w-2 bg-white h-full"></div>
-                                    <div class="w-1 bg-white h-full"></div>
+                                    <p class="text-slate-500 mb-0.5">Date</p>
+                                    <p class="font-bold text-white">Nov 22, 2026</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <button onclick="closeModal()" class="glass hover:bg-white/10 text-white font-medium py-3.5 px-8 rounded-xl transition-all w-full max-w-sm border border-white/20">
-                        Close & Return to Website
+                    <button onclick="closeModal()" class="w-full bg-slate-800 text-white font-bold py-4 rounded-xl active:scale-95 transition-transform">
+                        Back to Home
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
     <script>
-        // Navbar Scroll Effect
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                nav.classList.add('bg-black/80', 'backdrop-blur-xl', 'border-b', 'border-white/10', 'shadow-lg');
+        // Menu Toggle Logic
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const icon = document.getElementById('menuIcon');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                menu.classList.add('flex');
+                icon.classList.replace('fa-bars', 'fa-xmark');
             } else {
-                nav.classList.remove('bg-black/80', 'backdrop-blur-xl', 'border-b', 'border-white/10', 'shadow-lg');
-            }
-        });
-
-        // Mobile Menu Logic
-        const mobileMenu = document.getElementById('mobileMenu');
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        let isMenuOpen = false;
-
-        function toggleMobileMenu() {
-            isMenuOpen = !isMenuOpen;
-            if (isMenuOpen) {
-                mobileMenu.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
-                mobileMenu.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
-                mobileMenuBtn.innerHTML = '<i class="fa-solid fa-xmark text-xl"></i>';
-            } else {
-                mobileMenu.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
-                mobileMenu.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
-                mobileMenuBtn.innerHTML = '<i class="fa-solid fa-bars text-xl"></i>';
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+                icon.classList.replace('fa-xmark', 'fa-bars');
             }
         }
 
-        // Modal Logic
-        const modal = document.getElementById('registrationModal');
-        const modalContent = document.getElementById('modalContent');
-        const formSection = document.getElementById('formSection');
-        const loadingSection = document.getElementById('loadingSection');
-        const successSection = document.getElementById('successSection');
-        const ticketCount = document.getElementById('ticketCount');
-        const totalAmount = document.getElementById('totalAmount');
-        const pricePerTicket = 900;
-
+        // Modal / Bottom Sheet Logic
+        const modal = document.getElementById('regModal');
+        const sheet = document.getElementById('bottomSheet');
+        
         function openModal() {
             modal.classList.remove('hidden');
-            // Bottom sheet slide up animation
-            setTimeout(() => {
-                modalContent.classList.remove('translate-y-full', 'opacity-0');
-                modalContent.classList.add('translate-y-0', 'opacity-100');
+            // Small delay to allow display block to apply before animation
+            setTimeout(function() {
+                sheet.classList.add('open');
             }, 10);
-            document.body.classList.add('modal-active');
-            resetModal();
+            document.body.style.overflow = 'hidden';
+            
+            // Reset to step 1
+            document.getElementById('stepForm').classList.remove('hidden');
+            document.getElementById('stepLoading').classList.add('hidden');
+            document.getElementById('stepSuccess').classList.add('hidden');
+            
+            // Clear inputs
+            document.getElementById('userName').value = '';
+            document.getElementById('userEmail').value = '';
+            document.getElementById('userPhone').value = '';
         }
 
         function closeModal() {
-            // Bottom sheet slide down animation
-            modalContent.classList.add('translate-y-full', 'opacity-0');
-            modalContent.classList.remove('translate-y-0', 'opacity-100');
-            setTimeout(() => {
+            sheet.classList.remove('open');
+            setTimeout(function() {
                 modal.classList.add('hidden');
-                document.body.classList.remove('modal-active');
-            }, 300);
+                document.body.style.overflow = '';
+            }, 300); // match transition duration
         }
 
-        function calculateTotal() {
-            const count = parseInt(ticketCount.value);
-            const total = count * pricePerTicket;
-            // Format number with commas for Indian Rupee format
-            totalAmount.textContent = `₹${total.toLocaleString('en-IN')}`;
-        }
+        // Registration & Payment Mock Logic (Razorpay + Supabase workflow)
+        function processPayment() {
+            const name = document.getElementById('userName').value.trim();
+            const email = document.getElementById('userEmail').value.trim();
+            const phone = document.getElementById('userPhone').value.trim();
 
-        async function processPayment(e) {
-            e.preventDefault(); 
-            
-            // 1. Prepare Data for Supabase
-            const formData = {
-                name: document.getElementById('fullName').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                tickets: parseInt(ticketCount.value),
-                total_amount: parseInt(ticketCount.value) * pricePerTicket,
-                event_name: 'After Diwali Party'
-            };
-
-            // UI Transition
-            formSection.classList.add('hidden');
-            loadingSection.classList.remove('hidden');
-            document.getElementById('loadingText').textContent = "Initializing Razorpay...";
-
-            // 2. Simulate Razorpay Checkout Integration
-            /* 
-            // ACTUAL RAZORPAY CODE IMPLEMENTATION:
-            var options = {
-                "key": "YOUR_RAZORPAY_KEY_ID", // Enter your Razorpay Key ID
-                "amount": formData.total_amount * 100, // Amount in paise
-                "currency": "INR",
-                "name": "AFK Community",
-                "description": "After Diwali Party Passes",
-                "handler": async function (response){
-                    // Executes on successful payment
-                    console.log("Payment ID: ", response.razorpay_payment_id);
-                    document.getElementById('loadingText').textContent = "Securing your passes...";
-                    
-                    // 3. Save to Supabase after successful payment
-                    await saveToSupabase(formData, response.razorpay_payment_id);
-                },
-                "prefill": {
-                    "name": formData.name,
-                    "email": formData.email,
-                    "contact": formData.phone
-                },
-                "theme": {
-                    "color": "#3395ff"
-                }
-            };
-            var rzp1 = new Razorpay(options);
-            rzp1.on('payment.failed', function (response){
-                alert("Payment Failed. Reason: " + response.error.description);
-                resetModal(); // go back to form
-            });
-            rzp1.open();
-            */
-
-            // SIMULATION FOR UI DEMONSTRATION:
-            setTimeout(() => {
-                document.getElementById('loadingText').textContent = "Waiting for payment completion...";
-                
-                // Simulate successful payment after 2 seconds
-                setTimeout(async () => {
-                    document.getElementById('loadingText').textContent = "Saving to database...";
-                    
-                    // Simulate Supabase Save
-                    await saveToSupabase(formData, "sim_rzp_" + Math.floor(Math.random() * 1000000));
-                    
-                    // Show Success Ticket
-                    loadingSection.classList.add('hidden');
-                    successSection.classList.remove('hidden');
-                    
-                    // Update Digital Ticket
-                    const count = parseInt(ticketCount.value);
-                    document.getElementById('ticketConfirmCount').textContent = count === 1 ? '1 Pass' : `${count} Passes`;
+            if (!name || !email || !phone) {
+                // Simple validation feedback via UI manipulation instead of alert()
+                const btn = document.querySelector('button[onclick="processPayment()"]');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = 'Please fill all fields';
+                btn.classList.add('bg-red-500');
+                btn.classList.remove('bg-[#3395FF]');
+                setTimeout(function() {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('bg-red-500');
+                    btn.classList.add('bg-[#3395FF]');
                 }, 2000);
-            }, 1000);
-        }
+                return;
+            }
 
-        async function saveToSupabase(data, paymentId) {
-            console.log("Saving to Supabase...", data, "Payment ID:", paymentId);
+            // Step 1 -> Loading
+            document.getElementById('stepForm').classList.add('hidden');
+            document.getElementById('stepLoading').classList.remove('hidden');
+
             /*
-            // ACTUAL SUPABASE INTEGRATION CODE:
-            // 1. Initialize client (Use your project URL and public Anon key)
-            // const supabase = supabase.createClient('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY')
-
-            // 2. Insert record into your 'registrations' table
-            const { data: result, error } = await supabase
-                .from('registrations')
-                .insert([
-                    { 
-                        full_name: data.name, 
-                        email: data.email, 
-                        phone: data.phone,
-                        tickets: data.tickets,
-                        amount: data.total_amount,
-                        razorpay_payment_id: paymentId,
-                        event_id: 'after_diwali_party'
-                    },
-                ]);
-
-            if (error) {
-                console.error("Supabase Error:", error);
-                // Handle error (e.g., alert the user)
-            }
+              MOCK SUPABASE & RAZORPAY WORKFLOW
+              In production:
+              1. Await Supabase insert for user details (status: pending).
+              2. Fetch Razorpay order_id from backend.
+              3. Open Razorpay options window.
+              4. On success handler, update Supabase status to 'paid'.
             */
-            // Simulate network delay for Supabase
-            return new Promise(resolve => setTimeout(resolve, 800));
-        }
 
-        function resetModal() {
-            document.getElementById('regForm').reset();
-            calculateTotal();
-            formSection.classList.remove('hidden');
-            loadingSection.classList.add('hidden');
-            successSection.classList.add('hidden');
-            
-            // Ensure modal content is ready for transition
-            modalContent.classList.add('transition-transform', 'duration-300', 'transform', 'translate-y-full', 'opacity-0');
+            setTimeout(function() {
+                // Simulate Razorpay success callback completion
+                document.getElementById('stepLoading').classList.add('hidden');
+                document.getElementById('stepSuccess').classList.remove('hidden');
+                
+                // Update Digital Ticket
+                document.getElementById('ticketNameDisplay').textContent = name;
+            }, 2500);
         }
-
-        // Close on outside click
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeModal();
-            }
-        });
     </script>
 </body>
 </html>
